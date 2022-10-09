@@ -1,27 +1,49 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authorController = require('../controller/authorcontroller');
-const blogsController = require('../controller/blogsController');
+const authorController = require("../controller/authorcontroller");
+const blogController = require("../controller/blogsController");
+const mid1 = require("../middleware/auth1");
 
+//--------------create author api-----------------//
 
-const m1authentication=require("../middleware/auth1")
-const m2Authorisation=require("../middleware/auth2")
-const m3Authorisation=require("../middleware/auth3")
+router.post("/authors", authorController.createAuthor);
 
+//---------------create blog api--------------------//
 
-router.post('/authors', authorController.createAuthor)
+router.post("/blogs", mid1.authentication, blogController.createBlog);
 
-router.post('/login', authorController.authorLogin)
+//----------------get blogs-------------------------//
 
-router.post('/blogs',m1authentication.authentication, blogsController.createBlog)  // handeler function 
+router.get("/getBlogs", mid1.authentication, blogController.getBlogs);
 
-router.get('/getBlogs',m1authentication.authentication, blogsController.getAllBlogs)
+//----------------update blogs--------------------//
 
-router.put('/blogs/:blogId',m1authentication.authentication, m2Authorisation.authorization,blogsController.updatedBlogsData)
+router.put(
+  "/blogs/:blogId",
+  mid1.authentication,
+  mid1.authorization,
+  blogController.updateBlog
+);
 
-router.delete('/blogs/:blogId',m1authentication.authentication,m2Authorisation.authorization, blogsController.deletedByParams)
+//----------------------DELETE /blogs/:blogId---------------------------//
 
-router.delete('/blog',m3Authorisation.authorization1,blogsController.deleteByQuery)
+router.delete(
+  "/blogs/:blogId",
+  mid1.authentication,
+  mid1.authorization,
+  blogController.deleteByBlogID
+);
 
+//----------------------------DELETE /blogs-----------------------------//
+
+router.delete(
+  "/blogs",
+  mid1.authentication,
+  mid1.authorization,
+  blogController.deleteByFilter
+);
+
+//-----------------------------Login Author------------------------------//
+router.post("/login", authorController.loginAuthor);
 
 module.exports = router;
