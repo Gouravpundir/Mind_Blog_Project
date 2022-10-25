@@ -17,7 +17,7 @@ const createBlog = async (req, res) => {
     if (!validAuthorId) {
       return res.staus(400).send({ status: false, msg: "userId is not valid" });
     }
-    let blogDatas = {
+    let blogsData = {
       title: title,
       body: body,
       authorId: authorId,
@@ -28,14 +28,14 @@ const createBlog = async (req, res) => {
       publishedAt: isPublished ? new Date() : null,
     };
     //Blogs creation
-    let savedData = await blogModel.create(blogDatas);
+    let savedData = await blogModel.create(blogsData);
     return res.status(201).send({ status: true, data: savedData });
   } catch (err) {
     res.status(500).send({ status: false, error: err.message });
   }
 };
 
-//GET BLOGS
+//_____________________________GET BLOGS_____________________________//
 
 const getBlogs = async function (req, res) {
   try {
