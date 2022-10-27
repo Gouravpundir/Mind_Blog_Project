@@ -14,6 +14,15 @@ const isvalidRequestBody = function (requestBody) {
 const createBlog = async (req, res) => {
   try {
     let blogData = req.body;
+    
+       if (!isvalidRequestBody(requestBody)) {
+      res.status(400).send({
+        status: false,
+        message: "Invalid request parameters. Please provide author details",
+      });
+      return;
+    }
+    
     let { title, body, authorId, tags, category, subcategory, isPublished } =
       blogData;
     let validAuthorId = await authorModel.findById(authorId);
