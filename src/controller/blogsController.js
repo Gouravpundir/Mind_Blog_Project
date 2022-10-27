@@ -15,7 +15,7 @@ const createBlog = async (req, res) => {
   try {
     let blogData = req.body;
     
-       if (!isvalidRequestBody(requestBody)) {
+       if (!isvalidRequestBody(blogData)) {
       res.status(400).send({
         status: false,
         message: "Invalid request parameters. Please provide author details",
