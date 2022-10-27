@@ -6,6 +6,9 @@ const authorModel = require("../model/authormodel");
 let isValid = mongoose.Types.ObjectId.isValid;
 let Moment = moment().format();
 
+const isvalidRequestBody = function (requestBody) {
+  return Object.keys(requestBody).length > 0;
+};
 //---------------------------------CREATE BLOG------------------------------------//
 
 const createBlog = async (req, res) => {
