@@ -1,11 +1,6 @@
-# Blog_Project_1-Group_26
+# Blog_Project_1
 
-
-
-Plutonium
-Repository for backend cohort - Plutonium
-
-Blogging Site Mini Project Requirement
+# Blogging Site Mini Project Requirement
 Phase I
 Models
 
