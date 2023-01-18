@@ -2,80 +2,33 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const blogModel = require("../model/blogsmodel");
 
-//-----------------------AUTHENTICATION-------------------------//
+const secret = "Blogging-Site"; //secret key for JWT
 
-const authentication = async function (req, res, next) {
+//function to authenticate the token
+const authenticate = (req, res, next) => {
+  const token = req.headers["x-api-key"]; //get the token from headers
+  if (!token) return res.status(400).send({ status: false, message: "Token is missing" }); //if token is missing, return error message
+
   try {
-    var token = req.headers["x-api-key"];
-    if (!token) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Token is missing" });
-    }
-    var decodedToken = jwt.verify(token, "Blogging-Site", (err, decode) => {
-      if (err) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Token is not correct!" });
-      }
-      req.decode = decode;
-
-      next();
-    });
-  } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
-  }
-};
-
-//-----------------------AUTHORIZATION-----------------------------//
-
-const authorization = async function (req, res, next) {
-  try {
-    let ObjectID = mongoose.Types.ObjectId;
-
-    // checking for query params
-
-    if (req.query.authorId) {
-      let authorId = req.query.authorId;
-      if (!ObjectID.isValid(authorId)) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Not a valid AuthorID" });
-      }
-      if (authorId != req.decode.authorId) {
-        return res
-          .status(403)
-          .send({ status: false, message: "You are not a authorized user" });
-      }
-      return next();
-    }
-
-    // checking for path params
-
-    if (req.params.blogId) {
-      let blogId = req.params.blogId;
-      if (!ObjectID.isValid(blogId)) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Not a valid BlogID" });
-      }
-      let check = await blogModel.findById(blogId);
-      if (!check) {
-        return res
-          .status(404)
-          .send({ status: false, message: "No such blog exists" });
-      }
-      if (check.authorId != req.decode.authorId) {
-        return res
-          .status(403)
-          .send({ status: false, message: "You are not a authorized user" });
-      }
-      return next();
-    }
+    req.decode = jwt.verify(token, secret); //decode the token using secret key
     next();
   } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
+    return res.status(400).send({ status: false, message: "Token is not correct!" }); //if token is invalid, return error message
   }
 };
 
-module.exports = { authentication, authorization };
+// function to authorize the user
+const authorize = async (req, res, next) => {
+  const ObjectID = mongoose.Types.ObjectId;
+  const authorId = req.query.authorId || req.params.authorId; // get authorId from query or path parameter
+
+  if (!authorId || !ObjectID.isValid(authorId)) return res.status(400).send({ status: false, message: "Invalid Author ID" }); // if authorId is not present or invalid, 
+  //return error message
+
+  if (authorId !== req.decode.authorId) return res.status(403).send({ status: false, message: "You are not authorized" }); //if authorId in token and request 
+  //do not match, return error message
+
+  next();
+};
+
+module.exports = { authenticate, authorize };
