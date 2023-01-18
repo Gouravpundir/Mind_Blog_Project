@@ -18,7 +18,7 @@ const authenticate = (req, res, next) => {
 };
 
 // function to authorize the user
-const authorize = async (req, res, next) => {
+const authorization  = async (req, res, next) => {
   const ObjectID = mongoose.Types.ObjectId;
   const authorId = req.query.authorId || req.params.authorId; // get authorId from query or path parameter
 
@@ -31,4 +31,4 @@ const authorize = async (req, res, next) => {
   next();
 };
 
-module.exports = { authenticate, authorize };
+module.exports = { authenticate, authorization  };
