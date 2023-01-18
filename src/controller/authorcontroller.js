@@ -112,8 +112,7 @@ const loginAuthor = async function (req, res) {
     let token = jwt.sign(
       {
         authorId: author._id,
-        batch: "Plutonium",
-        organisation: "Project-1, Group-26",
+        organisation: "Project-1",
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
       },
