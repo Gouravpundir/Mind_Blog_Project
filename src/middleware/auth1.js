@@ -8,9 +8,10 @@ const secret = "Blogging-Site"; //secret key for JWT
 const authenticate = (req, res, next) => {
   const token = req.headers["x-api-key"]; //get the token from headers
   if (!token) return res.status(400).send({ status: false, message: "Token is missing" }); //if token is missing, return error message
-
+  
   try {
-    req.decode = jwt.verify(token, secret); //decode the token using secret key
+    let decode = jwt.verify(token, secret); //decode the token using secret key
+    req.decode = decode;
     next();
   } catch (error) {
     return res.status(400).send({ status: false, message: "Token is not correct!" }); //if token is invalid, return error message
